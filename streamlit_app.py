@@ -12,7 +12,7 @@ import os
 from warnings import simplefilter
 
 simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
-HKT = timezone(timedelta(hours=8))
+
 # ==================== 0. 頁面與字型設定 ====================
 st.set_page_config(page_title="Jockey Race", layout="wide")
 
@@ -44,7 +44,7 @@ def get_chinese_font():
 get_chinese_font()
 
 st.title("🏇 Jockey Race 賽馬預測 (Streamlit 版)")
-
+HKT = timezone(timedelta(hours=8))
 # ==================== 1. Session State 初始化 ====================
 def init_session_state():
     defaults = {
