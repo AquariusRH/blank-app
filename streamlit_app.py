@@ -640,33 +640,16 @@ def fetch_race_card(date_str, venue):
                     
                     # 關鍵修改：過濾後備馬匹 (standbyNo 為空字串或 None)
                     filtered_runners = [r for r in runners if not r.get('standbyNo')]
-                    # --- 關鍵修正：將字串評分轉換為整數 ---
-                        try:
-                            # 讀取字串並轉換為整數 (int("059") -> 59)
-                            rating_val = int(r.get('currentRating', '0'))
-                        except (ValueError, TypeError):
-                            rating_val = 0
-                            
-                        # 排位和負磅也同樣進行穩健的數字轉換
-                        try:
-                            draw_val = int(r.get('barrierDrawNumber', '0'))
-                        except (ValueError, TypeError):
-                            draw_val = 0
 
-                        try:
-                            weight_val = int(r.get('handicapWeight', '0'))
-                        except (ValueError, TypeError):
-                            weight_val = 0
-                            
                     df = pd.DataFrame([{
                         "馬號": r['no'],
                         "馬名": r['name_ch'],
                         "騎師": r['jockey']['name_ch'] if r['jockey'] else '',
                         "練馬師": r['trainer']['name_ch'] if r['trainer'] else '',
                         "近績": r.get('last6run', ''),
-                        "評分": rating_val,
-                        "排位": draw_val,
-                        "負磅": weight_val
+                        "評分": int(r.get('currentRating', '0')),
+                        "排位": int(r.get('barrierDrawNumber', '0')),
+                        "負磅": int(r.get('handicapWeight', '0'))
                     } for r in filtered_runners])
                     
                     if not df.empty:
