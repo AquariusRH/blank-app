@@ -637,7 +637,7 @@ def fetch_race_card(date_str, venue):
                 for race in meeting.get('races', []):
                     r_no = race['no']
                     runners = race.get('runners', [])
-                    
+                    st.write(runners[0])
                     # 關鍵修改：過濾後備馬匹 (standbyNo 為空字串或 None)
                     filtered_runners = [r for r in runners if not r.get('standbyNo')]
 
