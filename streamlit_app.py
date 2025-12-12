@@ -44,7 +44,7 @@ def get_chinese_font():
 get_chinese_font()
 
 st.title("🏇 Jockey Race 賽馬預測 (Streamlit 版)")
-HKT = timezone(timedelta(hours=8))
+
 # ==================== 1. Session State 初始化 ====================
 def init_session_state():
     defaults = {
@@ -653,16 +653,18 @@ def fetch_race_card(date_str, venue):
                     } for r in filtered_runners])
                     
                     if not df.empty:
+                        # 將馬號轉換為數字並排序，確保順序正確
                         df['馬號_int'] = pd.to_numeric(df['馬號'], errors='coerce')
                         df = df.sort_values("馬號_int").drop(columns=['馬號_int']).set_index("馬號")
                     
+                    # Post Time
                     pt_str = race.get("postTime")
-                    pt = datetime.fromisoformat(pt_str).astimezone(HKT) if pt_str else None
+                    pt = datetime.fromisoformat(pt_str) if pt_str else None
                     
                     race_info[r_no] = {"df": df, "post_time": pt}
             return race_info
     except Exception as e:
-        st.error(f"獲取賽事卡數據失敗: {e}")
+        print(e)
     return {}
 
 # 嘗試加載 Race Card
