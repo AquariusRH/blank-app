@@ -637,7 +637,7 @@ def fetch_race_card(date_str, venue):
                 for race in meeting.get('races', []):
                     r_no = race['no']
                     runners = race.get('runners', [])
-                    st.write(runners[0])
+                    
                     # 關鍵修改：過濾後備馬匹 (standbyNo 為空字串或 None)
                     filtered_runners = [r for r in runners if not r.get('standbyNo')]
 
@@ -647,9 +647,9 @@ def fetch_race_card(date_str, venue):
                         "騎師": r['jockey']['name_ch'] if r['jockey'] else '',
                         "練馬師": r['trainer']['name_ch'] if r['trainer'] else '',
                         "近績": r.get('last6run', ''),
-                        "評分": r.get('rating', 'N/A'),
-                        "排位": r.get('draw', 'N/A'),
-                        "負磅": r.get('actualWeight', 'N/A')
+                        "評分": r.get('currentRating', 'N/A'),
+                        "排位": r.get('barrierDrawNumber', 'N/A'),
+                        "負磅": r.get('handicapWeight', 'N/A')
                     } for r in filtered_runners])
                     
                     if not df.empty:
