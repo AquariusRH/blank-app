@@ -736,7 +736,7 @@ else:
 
 methodlist = ['WIN', 'PLA', 'QIN', 'QPL'] # 簡化預設
 print_list = ['WIN&QIN', 'PLA&QPL']
-
+HKT = timezone(timedelta(hours=8))
 if monitoring_on:
     # --- 實時監控模式 (比賽當日) ---
     st.markdown("### 🟢 實時監控與資金流預測中...")
