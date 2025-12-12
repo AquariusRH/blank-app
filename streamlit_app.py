@@ -637,15 +637,26 @@ def fetch_race_card(date_str, venue):
                 for race in meeting.get('races', []):
                     r_no = race['no']
                     runners = race.get('runners', [])
+                    
+                    # 關鍵修改：過濾後備馬匹
+                    filtered_runners = [
+                        r for r in runners 
+                        # 只有當 standbyNo 為空字串或 None 時，才是出賽馬匹
+                        if not r.get('standbyNo') 
+                    ]
+
                     df = pd.DataFrame([{
                         "馬號": r['no'],
                         "馬名": r['name_ch'],
                         "騎師": r['jockey']['name_ch'] if r['jockey'] else '',
                         "練馬師": r['trainer']['name_ch'] if r['trainer'] else '',
                         "近績": r.get('last6run', '')
-                    } for r in runners])
+                    } for r in filtered_runners])
+                    
                     if not df.empty:
-                        df = df.sort_values("馬號", key=lambda x: pd.to_numeric(x)).set_index("馬號")
+                        # 將馬號轉換為數字並排序，確保順序正確
+                        df['馬號_int'] = pd.to_numeric(df['馬號'], errors='coerce')
+                        df = df.sort_values("馬號_int").drop(columns=['馬號_int']).set_index("馬號")
                     
                     # Post Time
                     pt_str = race.get("postTime")
