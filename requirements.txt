@@ -1,1 +1,8 @@
 streamlit
+pandas
+numpy
+requests
+matplotlib
+plotly
+python-dateutil
+scikit-learn
