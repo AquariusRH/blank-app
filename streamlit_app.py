@@ -647,7 +647,7 @@ def fetch_race_card(date_str, venue):
                         "騎師": r['jockey']['name_ch'] if r['jockey'] else '',
                         "練馬師": r['trainer']['name_ch'] if r['trainer'] else '',
                         "近績": r.get('last6run', ''),
-                        #"評分": int(r.get('currentRating', '0')),
+                        "評分": int(r.get('currentRating', '0')),
                         #"排位": int(r.get('barrierDrawNumber', '0')),
                         #"負磅": int(r.get('handicapWeight', '0'))
                     } for r in filtered_runners])
