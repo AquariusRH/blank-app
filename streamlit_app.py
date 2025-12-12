@@ -695,7 +695,7 @@ def fetch_race_card(date_str, venue):
 # --- 輸入區 ---
 with st.sidebar:
     st.header("設定")
-    Date = st.date_input('日期:', value=datetime.now(HKT).date())
+    Date = st.date_input('日期:', value=datetime.now().date())
     place = st.selectbox('場地:', ['ST', 'HV', 'S1', 'S2'])
     race_no = st.selectbox('場次:', np.arange(1, 12))
     
@@ -736,13 +736,13 @@ else:
 
 methodlist = ['WIN', 'PLA', 'QIN', 'QPL'] # 簡化預設
 print_list = ['WIN&QIN', 'PLA&QPL']
-HKT = timezone(timedelta(hours=8))
+
 if monitoring_on:
     # --- 實時監控模式 (比賽當日) ---
     st.markdown("### 🟢 實時監控與資金流預測中...")
     placeholder = st.empty()
     
-    time_now = datetime.now(HKT)
+    time_now = datetime.now()
     time_str = time_now.strftime('%H:%M:%S')
     
     # 1. 抓取數據 (這裡需要您的實際抓取邏輯)
