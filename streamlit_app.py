@@ -744,3 +744,34 @@ elif st.session_state.last_update:
     st.info(f"監控已暫停。最後數據時間: {st.session_state.last_update.strftime('%H:%M:%S')}")
     # 即使暫停，也顯示最後一次的圖表
     print_bubble(race_no, print_list)
+    st.markdown("---")
+    st.subheader("🤖 AI 綜合預測排名")
+    
+    # 計算預測
+    prediction_df = calculate_smart_score(race_no)
+    
+    if not prediction_df.empty:
+        # 整理顯示格式
+        display_df = prediction_df.copy()
+        display_df = display_df[['Odds', 'MoneyFlow', 'FormScore', 'TotalScore']]
+        display_df.columns = ['當前賠率', '近期資金流(K)', '近績評分', '🔥綜合推薦分']
+        
+        # 格式化
+        display_df['近期資金流(K)'] = display_df['近期資金流(K)'].apply(lambda x: f"{x:.1f}")
+        display_df['近績評分'] = display_df['近績評分'].astype(int)
+        display_df['🔥綜合推薦分'] = display_df['🔥綜合推薦分'].apply(lambda x: f"{x:.1f}")
+        
+        # 用不同顏色標註前三名
+        def highlight_top(row):
+            if float(row['🔥綜合推薦分']) >= float(display_df['🔥綜合推薦分'].iloc[0]):
+                return ['background-color: #ffcccc'] * len(row) # 第一名 紅色
+            elif float(row['🔥綜合推薦分']) >= float(display_df['🔥綜合推薦分'].iloc[2]):
+                return ['background-color: #ffffcc'] * len(row) # 前三名 黃色
+            else:
+                return [''] * len(row)
+
+        st.dataframe(display_df.style.apply(highlight_top, axis=1), use_container_width=True)
+        
+        # 簡單的文字解讀
+        top_horse = display_df.index[0]
+        st.info(f"💡 AI 分析建議：目前綜合數據最強的是 **{top_horse}號馬**。它的實力與資金流向總和評分最高。")
