@@ -692,25 +692,45 @@ def fetch_race_card(date_str, venue):
         print(e)
     return {}
 
+# --- 輸入區 ---
+with st.sidebar:
+    st.header("設定")
+    Date = st.date_input('日期:', value=datetime.now(HKT).date())
+    place = st.selectbox('場地:', ['ST', 'HV', 'S1', 'S2'])
+    race_no = st.selectbox('場次:', np.arange(1, 12))
+    
+    st.markdown("---")
+    st.subheader("監控選項")
+    
+    monitoring_on = st.toggle("啟動即時監控", value=False, help="僅在比賽日有賠率時開啟")
+    
+    if st.button("重置所有數據"):
+        st.cache_data.clear()
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
+        st.rerun()
+
 # 嘗試加載 Race Card
 date_str = str(Date)
 if not st.session_state.api_called:
-    with st.spinner("載入賽事資料中..."):
-        race_card_data = fetch_race_card(date_str, place)
-        if race_card_data:
-            st.session_state.race_dataframes = {k: v['df'] for k,v in race_card_data.items()}
-            st.session_state.post_time_dict = {k: v['post_time'] for k,v in race_card_data.items()}
-            st.session_state.api_called = True
+    race_card_data = fetch_race_card(date_str, place)
+    if race_card_data:
+        st.session_state.race_dataframes = {k: v['df'] for k,v in race_card_data.items()}
+        st.session_state.post_time_dict = {k: v['post_time'] for k,v in race_card_data.items()}
+        st.session_state.api_called = True
+        st.success("賽事排位卡數據載入成功。")
 
 # --- 顯示賽事資訊 ---
-if race_no in st.session_state.race_dataframes:
+current_df = st.session_state.race_dataframes.get(race_no, pd.DataFrame())
+if not current_df.empty:
     pt = st.session_state.post_time_dict.get(race_no)
     pt_str = pt.strftime("%H:%M") if pt else "--:--"
     st.info(f"📍 {place} 第 {race_no} 場 | 🕒 開跑: {pt_str}")
-    with st.expander("查看排位表", expanded=False):
-        st.dataframe(st.session_state.race_dataframes[race_no], use_container_width=True)
+    with st.expander("查看排位表 (已排除後備馬)", expanded=False):
+        # 顯示靜態特徵，供靜態預測使用
+        st.dataframe(current_df, use_container_width=True)
 else:
-    st.warning("找不到此場次資料，請確認日期與場地。")
+    st.warning("找不到此場次資料，請確認日期與場地，並點擊'重置所有數據'重試。")
 
 # ==================== 5. 監控循環邏輯 ====================
 
